@@ -113,15 +113,4 @@ if response.find('tok') != -1:
       response = input()
 else:
   print 'Port {0} Error'.format(args.port)
-'''
-file = open(filename, 'r')
-print 'Loading {0} {1} byte'.format(filename, os.path.getsize(filename))
-for line in file.readlines():
-  print line.strip()
-print '-'*80
-file.seek(0, os.SEEK_SET)  
-for line in file.readlines():
-  print line.strip()n
-print '='*80
-'''
 closeall()
