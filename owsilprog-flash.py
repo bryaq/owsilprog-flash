@@ -64,16 +64,34 @@ print response
 if response.find('tok') != -1:
   print 'Port {0} Connected\nInitialize...'.format(args.port)
   flasher.write('rid')
+  flasher.flush()
   response = flasher.read(20)
   i = response.find('dok')
   device_id = response[i+3:i+5]
   sys.stdout.write('Device ID: 0x{0}\nConfirm to Flash {1} byte [y/n]: '.format(device_id, size_file))
-  
+ 
   if isPython2:
     response = raw_input()
   else:
     response = input()
+ 
   if response.lower() == 'y':
+    
+    # Erase process
+    print '\nErase...'
+    flasher.write('e')
+    flasher.flush()
+    isOK = False
+    i = 0
+    while not isOK:
+      b = flasher.read(1)
+      if b == 'o':
+        i = 1
+      if b == 'k' and i == 1:
+        isOK = True
+    flasher.read(2)
+    
+    # Flash process
     print '\nFlashing...'
     sendByte = 0
     update_progress(0)
@@ -87,6 +105,11 @@ if response.find('tok') != -1:
       update_progress(sendByte*100/size_file)
     update_progress(100)
     
+    # reset serial IO
+    flasher.flush()
+    flasher.read(10)
+    
+    # verify process
     print '\nVerify...'
     sendByte = 0
     update_progress(0)
