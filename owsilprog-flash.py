@@ -135,11 +135,14 @@ if response.find('tok'.encode()) != -1:
         if line[0:3] != ':00':
           flasher.write(('bw'+line.strip()).encode())
           flasher.flush()
+        else:
+          break
         flasher.read(len(line) + 6)
         update_progress(sendByte*100/size_file)
       update_progress(100)
       
       # reset serial IO
+      flasher.write('ri'.encode())
       flasher.flush()
       flasher.read(10)
       
@@ -158,6 +161,8 @@ if response.find('tok'.encode()) != -1:
           if response[9:11] != 'ok' or response[11:-2] != line:
             print('error')
             closeall();
+        else:
+          break
         update_progress(sendByte*100/size_file)
       update_progress(100)
       
